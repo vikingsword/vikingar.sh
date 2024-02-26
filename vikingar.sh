@@ -275,9 +275,9 @@ checkContainer() {
             'exited')
                 echoContent yellow " =>> 容器 '$CONTAINER_NAME' 已停止."
                 ;;
-            *)
-                echoContent yellow " =>> 容器 '$CONTAINER_NAME' 处于未知状态: $STATUS"
-                ;;
+            # *)
+            #     echoContent yellow " =>> 容器 '$CONTAINER_NAME' 处于未知状态: $STATUS"
+            #     ;;
         esac
     fi
 }
@@ -430,7 +430,7 @@ menu() {
     echoContent skyBlue "\n=========================================================="
     echoContent lightYellow "vikingar 一键脚本"
     echoContent lightYellow "author: vikingar"
-    echoContent lightYellow "version: v1.0"
+    echoContent lightYellow "version: v1.1.0"
     echoContent lightYellow "blog: blog.vikingsword.top"
     echoContent skyBlue "=========================================================="
 
@@ -450,9 +450,9 @@ menu() {
     echoContent yellow "(7) 卸载Nginx Proxy Manager"
 
     echoContent skyBlue "-------------------------管理-----------------------------"
-    echoContent yellow "(8) 卸载脚本"
     echoContent yellow "(0) 更新脚本"
     echoContent yellow "(t) 退出脚本"
+    echoContent yellow "(8) 卸载脚本"
 
     mkdirTools
     aliasInstall
