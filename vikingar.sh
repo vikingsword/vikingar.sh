@@ -450,9 +450,9 @@ menu() {
     echoContent yellow "(7) 卸载Nginx Proxy Manager"
 
     echoContent skyBlue "-------------------------管理-----------------------------"
+    echoContent yellow "(8) 卸载脚本"
     echoContent yellow "(0) 更新脚本"
     echoContent yellow "(t) 退出脚本"
-    echoContent yellow "(8) 卸载脚本"
 
     mkdirTools
     aliasInstall
