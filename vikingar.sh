@@ -232,18 +232,18 @@ publicIP=$(getPublicIP "${type}")
 # 更新脚本
 updateVikingar() {
     echoContent skyBlue "\n进度  $1/${totalProgress} : 更新vikingar脚本"
-    rm -rf /etc/vikingar/vikingar.sh
+    # rm -rf /etc/vikingar/vikingar.sh
     
     wget -c -q "${wgetShowProgressStatus}" -P /etc/vikingar/ -N --no-check-certificate " https://raw.githubusercontent.com/vikingsword/vikingar.sh/master/vikingar.sh"
     
 
     sudo chmod 700 /etc/vikingar/vikingar.sh
     local version
-    version=$(grep '当前版本: v' "/etc/vikingar/vikingar.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
+    # version=$(grep '当前版本: v' "/etc/vikingar/vikingar.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
 
     echoContent green "\n ---> 更新完毕"
-    echoContent yellow " ---> 请手动执行[vikingar]打开脚本"
-    echoContent green " ---> 当前版本：${version}\n"
+    # echoContent yellow " ---> 请手动执行[vikingar]打开脚本"
+    # echoContent green " ---> 当前版本：${version}\n"
     echoContent yellow "如更新不成功，请手动执行下面命令\n"
     echoContent skyBlue "wget -N --no-check-certificate  https://raw.githubusercontent.com/vikingsword/vikingar.sh/master/vikingar.sh && chmod 700 ./vikingar.sh && ./vikingar.sh"
     echo
@@ -430,7 +430,7 @@ menu() {
     echoContent skyBlue "\n=========================================================="
     echoContent lightYellow "vikingar 一键脚本"
     echoContent lightYellow "author: vikingar"
-    echoContent lightYellow "version: v1.1.0"
+    echoContent lightYellow "version: v1.0"
     echoContent lightYellow "blog: blog.vikingsword.top"
     echoContent skyBlue "=========================================================="
 
@@ -450,9 +450,9 @@ menu() {
     echoContent yellow "(7) 卸载Nginx Proxy Manager"
 
     echoContent skyBlue "-------------------------管理-----------------------------"
+    echoContent yellow "(8) 卸载脚本"
     echoContent yellow "(0) 更新脚本"
     echoContent yellow "(t) 退出脚本"
-    echoContent yellow "(8) 卸载脚本"
 
     mkdirTools
     aliasInstall
