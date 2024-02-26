@@ -89,7 +89,7 @@ checkSystem() {
     fi
 
     if [[ -z ${release} ]]; then
-        echoContent red "\n本脚本不支持此系统，请将下方日志反馈给开发者\n"
+        echoContent red "\n本脚本不支持此系统, 请将下方日志反馈给开发者\n"
         echoContent yellow "$(cat /etc/issue)"
         echoContent yellow "$(cat /proc/version)"
         exit 0
@@ -114,9 +114,8 @@ installTools() {
         pgrep -f apt | xargs kill -9
     fi
 
-    echoContent green " --->【新机器可能比较慢】"
-    echoContent green " --->【如果长时间无反应，请手动停止后重新执行】"
     echoContent green " ---> 检查、安装更新"
+    echoContent green " --->【如果长时间无反应，请手动停止后重新执行】"
 
     # 确保 yum 命令可以顺利执行，先删除锁文件。这样可以避免因前一个 yum 进程意外结束而导致的锁定。
     if [[ "${release}" == "centos" ]]; then
@@ -235,26 +234,25 @@ updateVikingar() {
     echoContent skyBlue "\n进度  $1/${totalProgress} : 更新vikingar脚本"
     rm -rf /etc/vikingar/vikingar.sh
     
-    wget -c -q "${wgetShowProgressStatus}" -P /etc/vikingar/ -N --no-check-certificate "https://fly-uni.com/onekey/zhumao.sh"
+    wget -c -q "${wgetShowProgressStatus}" -P /etc/vikingar/ -N --no-check-certificate " https://raw.githubusercontent.com/vikingsword/vikingar.sh/master/vikingar.sh"
     
 
     sudo chmod 700 /etc/vikingar/vikingar.sh
     local version
-    version=$(grep '当前版本：v' "/etc/vikingar/vikingar.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
+    version=$(grep '当前版本: v' "/etc/vikingar/vikingar.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
 
     echoContent green "\n ---> 更新完毕"
-    echoContent yellow " ---> 请手动执行[zhumao]打开脚本"
+    echoContent yellow " ---> 请手动执行[vikingar]打开脚本"
     echoContent green " ---> 当前版本：${version}\n"
     echoContent yellow "如更新不成功，请手动执行下面命令\n"
-    echoContent skyBlue "wget -N --no-check-certificate https://fly-uni.com/onekey/zhumao.sh && chmod 700 ./vikingar.sh && ./vikingar.sh"
+    echoContent skyBlue "wget -N --no-check-certificate  https://raw.githubusercontent.com/vikingsword/vikingar.sh/master/vikingar.sh && chmod 700 ./vikingar.sh && ./vikingar.sh"
     echo
     exit 0
 }
 
-# 检测安装了啥
+# 检测安装内容
 checkContainer() {
-    # STATUS=$(docker inspect zhumao-chatgpt >/dev/null)
-        # 定义容器名称
+    # 定义容器名称
     CONTAINER_NAME=$1
 
     # 获取容器状态
@@ -319,91 +317,12 @@ checkDocker(){
     fi  
 }
 
-# 安装chatgpt pandora
-installChatGPT(){
-    read -p "输入你想为chatgpt使用的端口 [默认: 33366]: " userPort
-    if [[ -z "$userPort" ]]; then
-        echoContent yellow "没有输入, 使用默认端口33366"
-        userPort=33366
-    elif ! [[ $userPort =~ ^[0-9]+$ ]]; then
-        echoContent red "无效端口: 端口必须是数字."
-        return 1
-    elif ((userPort < 1 || userPort > 65535)); then
-        echoContent red "无效端口：端口必须在 1 与 65535 之间."
-        return 1
-    fi
-
-    checkPort $userPort
-    checkDocker
-
-    echoContent yellow " ---> 安装chatgpt"
-    docker pull pengzhile/pandora
-    docker run --name zhumao-chatgpt \
-        --restart=always \
-        -e PANDORA_CLOUD=cloud \
-        -e PANDORA_SERVER=0.0.0.0:$userPort \
-        -p $userPort:$userPort -d pengzhile/pandora
-    echoContent yellow " ---> chatgpt安装完成"
-    echoContent yellow " ---> 访问此处即可使用: " && echoContent green "$(getPublicIP):$userPort"
-}
-
-# 删除chatgpt pandora
-uninstallChatGPT(){
-    echoContent yellow " ---> 正在停止chatgpt"
-    docker stop zhumao-chatgpt
-
-    echoContent yellow " ---> 正在删除chatgpt"
-    docker rm zhumao-chatgpt
-}
-
-# 安装chatgpt-next-web
-installChatGPTNextWeb(){
-    read -p "输入你想为chatgpt-next-web使用的端口 [默认: 33377]: " userPort
-    if [[ -z "$userPort" ]]; then
-        echoContent yellow "没有输入, 使用默认端口33377"
-        userPort=33377
-    elif ! [[ $userPort =~ ^[0-9]+$ ]]; then
-        echoContent red "无效端口: 端口必须是数字."
-        return 1
-    elif ((userPort < 1 || userPort > 65535)); then
-        echoContent red "无效端口：端口必须在 1 与 65535 之间."
-        return 1
-    fi
-
-    checkPort $userPort
-    checkDocker
-
-    # 读取用户输入
-    read -p "请输入OPENAI_API_KEY: " OPENAI_API_KEY
-    read -p "请输入登录密码: " CODE
-
-    echoContent yellow " ---> 安装chatgpt-next-web"
-    docker pull yidadaa/chatgpt-next-web
-    docker run --name zhumao-chatgpt-next-web \
-        --restart=always \
-        -d -p $userPort:3000 \
-        -e OPENAI_API_KEY=$OPENAI_API_KEY \
-        -e CODE=$CODE \
-        yidadaa/chatgpt-next-web
-
-    echoContent yellow " ---> chatgpt-next-web安装完成"
-    echoContent yellow " ---> 访问此处即可使用: " && echoContent green "$(getPublicIP):$userPort"
-}
-
-# 删除chatgpt-next-web
-uninstallChatGPTNextWeb(){
-    echoContent yellow " ---> 正在停止chatgpt-next-web"
-    docker stop zhumao-chatgpt-next-web
-
-    echoContent yellow " ---> 正在删除chatgpt-next-web"
-    docker rm zhumao-chatgpt-next-web
-}
 
 #安装nginx proxy manager
 installNPM(){
-    read -p "输入你想为Nginx Proxy Manager使用的端口 [默认: 81]: " userPort
+    read -p "输入Nginx Proxy Manager使用的端口 [默认: 81]: " userPort
     if [[ -z "$userPort" ]]; then
-        echoContent yellow "没有输入, 使用默认端口81"
+        echoContent yellow "未输入, 使用默认端口81"
         userPort=81
     elif ! [[ $userPort =~ ^[0-9]+$ ]]; then
         echoContent red "无效端口: 端口必须是数字."
@@ -421,7 +340,7 @@ installNPM(){
     echoContent yellow " ---> 安装Nginx Proxy Manager"
     docker run -d \
         --restart=always \
-        --name zhumao-NPM \
+        --name vikingar-NPM \
         -p 80:80 \
         -p $userPort:81 \
         -p 443:443 \
@@ -438,16 +357,16 @@ installNPM(){
 # 删除nginx proxy manager
 uninstallNPM(){
     echoContent yellow " ---> 正在停止Nginx Proxy Manager"
-    docker stop zhumao-NPM
+    docker stop vikingar-NPM
 
     echoContent yellow " ---> 正在删除Nginx Proxy Manager"
-    docker rm zhumao-NPM
+    docker rm vikingar-NPM
 }
 
 # 脚本快捷方式
 aliasInstall() {
 
-    if [[ -f "./vikingar.sh" ]] && [[ -d "/etc/vikingar" ]] && grep <"./vikingar.sh" -q "作者：猪猫"; then
+    if [[ -f "./vikingar.sh" ]] && [[ -d "/etc/vikingar" ]] && grep <"./vikingar.sh" -q "作者: vikingar"; then
         mv "./vikingar.sh" /etc/vikingar/vikingar.sh
         local vikingarType=
         if [[ -d "/usr/bin/" ]]; then
@@ -475,7 +394,7 @@ aliasInstall() {
 # 安装BBR
 bbrInstall() {
     echoContent skyBlue "\n--------------------------------------"
-    echoContent green "注：引用(ylx2016)的成熟作品，地址(https://github.com/ylx2016/Linux-NetSpeed)"
+    echoContent green "引用地址(https://github.com/ylx2016/Linux-NetSpeed)"
     echoContent yellow "1.继续 (推荐原版BBR+FQ)"
     echoContent yellow "2.返回主菜单"
     echoContent skyBlue "--------------------------------------"
@@ -497,33 +416,27 @@ unInstall() {
     fi
     # echoContent yellow " ---> 脚本不会删除acme相关配置，删除请手动执行 [rm -rf /root/.acme.sh]"
     
-    rm -rf /etc/zhumao
+    rm -rf /etc/vikingar
 
-    rm -rf /usr/bin/zhumao
-    rm -rf /usr/sbin/zhumao
+    rm -rf /usr/bin/vikingar
+    rm -rf /usr/sbin/vikingar
     echoContent green " ---> 卸载快捷方式完成"
-    echoContent green " ---> 卸载猪猫脚本完成"
+    echoContent green " ---> 卸载vikingar脚本完成"
 }
 
 # 主菜单
 menu() {
     # cd "$HOME" || exit
     echoContent skyBlue "\n=========================================================="
-    echoContent lightYellow "《猪猫一键小工具》"
-    echoContent lightYellow "作者：猪猫"
-    echoContent lightYellow "当前版本：v1.1.0"
-    echoContent lightYellow "博客：https://fly-uni.com"
-    echoContent lightYellow "管子：https://www.youtube.com/@Fat_Cat_Fly"
+    echoContent lightYellow "vikingar 一键脚本"
+    echoContent lightYellow "author: vikingar"
+    echoContent lightYellow "version: v1.1.0"
+    echoContent lightYellow "blog: blog.vikingsword.top"
     echoContent skyBlue "=========================================================="
 
-    checkContainer "zhumao-chatgpt"
-    checkContainer "zhumao-chatgpt-next-web"
-    checkContainer "zhumao-NPM"
+    checkContainer "vikingar-NPM"
     # showInstallStatus
     # checkWgetShowProgress
-
-    # echoContent red "\n=========================== 推广区============================"
-    # echoContent yellow "推广区"
     
     echoContent skyBlue "\n-------------------------主机-----------------------------"
     echoContent yellow "(1) 主机配置及IP地址"
@@ -536,16 +449,10 @@ menu() {
     echoContent yellow "(6) 安装Nginx Proxy Manager"
     echoContent yellow "(7) 卸载Nginx Proxy Manager"
 
-    echoContent skyBlue "-------------------------ChatGPT--------------------------"
-    # echoContent yellow "(8) 安装chatgpt(原版-需要账户/token)"
-    # echoContent yellow "(9) 卸载chatgpt(原版)"
-    echoContent yellow "(8) 安装chatgpt(需要API-key)"
-    echoContent yellow "(9) 卸载chatgpt"
-
     echoContent skyBlue "-------------------------管理-----------------------------"
     echoContent yellow "(0) 更新脚本"
     echoContent yellow "(t) 退出脚本"
-    echoContent yellow "(10) 卸载脚本"
+    echoContent yellow "(8) 卸载脚本"
 
     mkdirTools
     aliasInstall
@@ -557,8 +464,8 @@ menu() {
         uname -a
         lsb_release -a
         
-        echoContent yellow " ---> 本机IPv4：" && echoContent green "$(getPublicIP "4")"
-        echoContent yellow " ---> 本机IPv6：" && echoContent green "$(getPublicIP "6")"
+        echoContent yellow " ---> 本机IPv4: " && echoContent green "$(getPublicIP "4")"
+        echoContent yellow " ---> 本机IPv6: " && echoContent green "$(getPublicIP "6")"
         ;;
     2)
         checkSystem
@@ -573,29 +480,17 @@ menu() {
     5)
         installDocker
         ;;
-    # 8)
-    #     installChatGPT
-    #     ;;
-    # 9)
-    #     uninstallChatGPT
-    #     ;;
-    8)
-        installChatGPTNextWeb
-        ;;
-    9)
-        uninstallChatGPTNextWeb
-        ;;
     6)
         installNPM
         ;;
     7)
         uninstallNPM
         ;;
-    10)
+    8)
         unInstall
         ;;
     0)
-        updateZhumao
+        updateVikingar
         ;;
     [tT])
         exit 0
