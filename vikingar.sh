@@ -98,7 +98,7 @@ checkSystem() {
 
 # 初始化安装目录
 mkdirTools() {
-    mkdir -p /etc/zhumao
+    mkdir -p /etc/vikingar
 }
 
 # test
@@ -231,22 +231,22 @@ getPublicIP() {
 publicIP=$(getPublicIP "${type}")
 
 # 更新脚本
-updateZhumao() {
-    echoContent skyBlue "\n进度  $1/${totalProgress} : 更新zhumao脚本"
-    rm -rf /etc/zhumao/zhumao.sh
+updateVikingar() {
+    echoContent skyBlue "\n进度  $1/${totalProgress} : 更新vikingar脚本"
+    rm -rf /etc/vikingar/vikingar.sh
     
-    wget -c -q "${wgetShowProgressStatus}" -P /etc/zhumao/ -N --no-check-certificate "https://fly-uni.com/onekey/zhumao.sh"
+    wget -c -q "${wgetShowProgressStatus}" -P /etc/vikingar/ -N --no-check-certificate "https://fly-uni.com/onekey/zhumao.sh"
     
 
-    sudo chmod 700 /etc/zhumao/zhumao.sh
+    sudo chmod 700 /etc/vikingar/vikingar.sh
     local version
-    version=$(grep '当前版本：v' "/etc/zhumao/zhumao.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
+    version=$(grep '当前版本：v' "/etc/vikingar/vikingar.sh" | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
 
     echoContent green "\n ---> 更新完毕"
     echoContent yellow " ---> 请手动执行[zhumao]打开脚本"
     echoContent green " ---> 当前版本：${version}\n"
     echoContent yellow "如更新不成功，请手动执行下面命令\n"
-    echoContent skyBlue "wget -N --no-check-certificate https://fly-uni.com/onekey/zhumao.sh && chmod 700 ./zhumao.sh && ./zhumao.sh"
+    echoContent skyBlue "wget -N --no-check-certificate https://fly-uni.com/onekey/zhumao.sh && chmod 700 ./vikingar.sh && ./vikingar.sh"
     echo
     exit 0
 }
@@ -447,27 +447,27 @@ uninstallNPM(){
 # 脚本快捷方式
 aliasInstall() {
 
-    if [[ -f "./zhumao.sh" ]] && [[ -d "/etc/zhumao" ]] && grep <"./zhumao.sh" -q "作者：猪猫"; then
-        mv "./zhumao.sh" /etc/zhumao/zhumao.sh
-        local zhumaoType=
+    if [[ -f "./vikingar.sh" ]] && [[ -d "/etc/vikingar" ]] && grep <"./vikingar.sh" -q "作者：猪猫"; then
+        mv "./vikingar.sh" /etc/vikingar/vikingar.sh
+        local vikingarType=
         if [[ -d "/usr/bin/" ]]; then
-            if [[ ! -f "/usr/bin/zhumao" ]]; then
-                ln -s /etc/zhumao/zhumao.sh /usr/bin/zhumao
-                chmod 700 /usr/bin/zhumao
-                zhumaoType=true
+            if [[ ! -f "/usr/bin/vikingar" ]]; then
+                ln -s /etc/vikingar/vikingar.sh /usr/bin/vikingar
+                chmod 700 /usr/bin/vikingar
+                vikingarType=true
             fi
 
-            rm -rf "./zhumao.sh"
+            rm -rf "./vikingar.sh"
         elif [[ -d "/usr/sbin" ]]; then
-            if [[ ! -f "/usr/sbin/zhumao" ]]; then
-                ln -s /etc/zhumao/zhumao.sh /usr/sbin/zhumao
-                chmod 700 /usr/sbin/zhumao
-                zhumaoType=true
+            if [[ ! -f "/usr/sbin/vikingar" ]]; then
+                ln -s /etc/vikingar/vikingar.sh /usr/sbin/vikingar
+                chmod 700 /usr/sbin/vikingar
+                vikingarType=true
             fi
-            rm -rf "./zhumao.sh"
+            rm -rf "./vikingar.sh"
         fi
-        if [[ "${zhumaoType}" == "true" ]]; then
-            echoContent green "快捷方式创建成功，可执行[zhumao]重新打开脚本"
+        if [[ "${vikingarType}" == "true" ]]; then
+            echoContent green "快捷方式创建成功，可执行[vikingar]重新打开脚本"
         fi
     fi
 }
