@@ -430,7 +430,7 @@ menu() {
     echoContent skyBlue "\n=========================================================="
     echoContent lightYellow "vikingar 一键脚本"
     echoContent lightYellow "author: vikingar"
-    echoContent lightYellow "version: v1.1.0"
+    echoContent lightYellow "version: v1.0"
     echoContent lightYellow "blog: blog.vikingsword.top"
     echoContent skyBlue "=========================================================="
 
